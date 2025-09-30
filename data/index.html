@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casa Domótica - Monitor</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏠 Casa Domótica</h1>
+            <p class="subtitle">Monitor de Sensores en Tiempo Real</p>
+        </header>
+
+        <div class="grid">
+            <!-- Tarjeta de Temperatura -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>🌡️ Temperatura</h2>
+                    <div class="sensor-value" id="temperature">-- °C</div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-calendar" onclick="openCalendar('temperature')">
+                        📅 Ver Histórico
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tarjeta de Humedad -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>💧 Humedad</h2>
+                    <div class="sensor-value" id="humidity">-- %</div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-calendar" onclick="openCalendar('humidity')">
+                        📅 Ver Histórico
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tarjeta de Gas -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>⚠️ Nivel de Gas</h2>
+                    <div class="sensor-value" id="gas">--</div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-calendar" onclick="openCalendar('gas')">
+                        📅 Ver Histórico
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tarjeta de Lluvia -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>🌧️ Sensor de Lluvia</h2>
+                    <div class="sensor-value" id="rain">--</div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-calendar" onclick="openCalendar('rain')">
+                        📅 Ver Histórico
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tarjeta de Movimiento -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>🚶 Sensor de Movimiento</h2>
+                    <div class="sensor-value" id="motion">--</div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-calendar" onclick="openCalendar('motion')">
+                        📅 Ver Histórico
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Gráficos -->
+        <div class="card full-width">
+            <div class="card-header">
+                <h2>📈 Gráficos de Sensores</h2>
+                <div class="chart-controls">
+                    <select id="sensorSelect">
+                        <option value="temperature">🌡️ Temperatura</option>
+                        <option value="humidity">💧 Humedad</option>
+                        <option value="gas">⚠️ Nivel de Gas</option>
+                        <option value="rain">🌧️ Lluvia</option>
+                    </select>
+                    <input type="date" id="chartDate">
+                    <button class="btn-primary" onclick="loadChartData()">
+                        🗓️ Cargar Gráfico
+                    </button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="sensorChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Modal Calendario -->
+        <div id="calendarModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>📅 Datos Históricos - <span id="modalSensorName"></span></h3>
+                    <span class="close" onclick="closeCalendar()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <input type="date" id="historyDate">
+                    <button class="btn-primary" onclick="loadHistoricalData()">
+                        📊 Ver Datos
+                    </button>
+                    <div id="historicalData" class="historical-data"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
