@@ -1,73 +1,203 @@
-/* === MODO OSCURO === */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #121212;
-  color: #e0e0e0;
+/* styles.css
+   Dashboard Casa Domótica
+   Guarda como styles.css
+*/
+
+/* ========== Variables de tema ========== */
+:root{
+  --bg: #f6f8fb;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #6b7280;
+  --primary: #2563eb;
+  --accent: #06b6d4;
+  --success: #16a34a;
+  --danger: #ef4444;
+  --glass: rgba(255,255,255,0.6);
+  --radius: 12px;
+  --shadow: 0 6px 18px rgba(15,23,42,0.06);
+  --glass-border: 1px solid rgba(15,23,42,0.04);
 }
 
-header, footer {
-  text-align: center;
-  background-color: #1f1f1f;
-  padding: 1em;
+/* Dark mode vars (se activa aplicando .dark al <body>) */
+body.dark {
+  --bg: #0b1220;
+  --card: #071026;
+  --text: #e6eef8;
+  --muted: #96a0b3;
+  --primary: #2b8cff;
+  --accent: #06b6d4;
+  --glass: rgba(255,255,255,0.02);
+  --glass-border: 1px solid rgba(255,255,255,0.04);
+  --shadow: 0 8px 22px rgba(2,6,23,0.6);
 }
 
-h1, h2 {
-  margin: 0.5em 0;
-  color: #ffffff;
+/* ========== Reset / Base ========== */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+  margin:0;
+  background: linear-gradient(180deg, var(--bg), rgba(0,0,0,0));
+  color:var(--text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.35;
+  padding:20px;
 }
 
-.sensor {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 0.5em auto;
-  padding: 0.5em;
-  max-width: 500px;
-  background: #1f1f1f;
-  border-radius: 8px;
+/* ========== Contenedor principal ========== */
+.container{
+  max-width:1100px;
+  margin: 12px auto;
+  padding: 12px;
 }
 
-.calendar-btn {
-  margin-left: 8px;
-  background: #333333;
-  color: #ffffff;
-  border: none;
-  padding: 0.3em 0.6em;
-  cursor: pointer;
-  border-radius: 6px;
-}
-.calendar-btn:hover {
-  background: #555555;
-}
-
-#grafica, .popup {
-  max-width: 600px;
-  margin: 1em auto;
-  padding: 1em;
-  background: #1f1f1f;
-  border-radius: 10px;
+/* ========== Navbar ========== */
+.navbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  background:var(--card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  border:var(--glass-border);
 }
 
-.hidden {
-  display: none;
+.brand{
+  font-weight:700;
+  font-size:1.05rem;
+  letter-spacing:0.2px;
 }
 
-canvas {
-  background: #222;
-  border-radius: 8px;
-  margin-top: 1em;
+.nav-right{display:flex;gap:8px;align-items:center}
+.nav-right input[type="url"]{
+  min-width:220px;
+  padding:8px 10px;
+  border-radius:8px;
+  border:1px solid rgba(15,23,42,0.06);
+  background:transparent;
+  color:var(--text);
+  outline:none;
+}
+.navbtn{
+  background:var(--primary);
+  color:white;
+  border:none;
+  padding:8px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  box-shadow: 0 6px 14px rgba(37,99,235,0.12);
+}
+.navbtn:active{transform:translateY(1px)}
+.theme-toggle{
+  background:transparent;border:1px solid rgba(15,23,42,0.06);padding:6px 8px;border-radius:8px;cursor:pointer;
 }
 
-button {
-  margin-top: 0.5em;
-  background: #333;
-  color: #fff;
-  border: none;
-  padding: 0.5em 1em;
-  cursor: pointer;
-  border-radius: 6px;
+/* ========== Encabezado y subtítulo ========== */
+h1{margin:18px 0 4px;font-size:1.45rem}
+.subtitle{color:var(--muted);margin:0 0 12px}
+
+/* ========== Tiles (grid) ========== */
+.tiles{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:14px;
+  margin-top:6px;
 }
-button:hover {
-  background: #555;
+
+.tile{
+  background:var(--card);
+  padding:14px;
+  border-radius:12px;
+  border:var(--glass-border);
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  min-height:96px;
+}
+
+.tile-header{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  font-weight:700;
+  color:var(--text);
+  margin-bottom:10px;
+}
+.tile-icon{font-size:20px}
+.tile-title{font-size:0.95rem}
+
+/* cuerpo del tile */
+.tile-body{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.kv{display:flex;flex-direction:column}
+.kv span{font-size:0.78rem;color:var(--muted)}
+.kv strong{font-size:1.2rem;margin-top:4px}
+
+/* Acciones del tile (botones) */
+.tile-actions{margin-top:8px;display:flex;gap:8px}
+.tile-actions button{padding:8px 10px;border-radius:8px;border:none;background:var(--primary);color:white;cursor:pointer}
+
+/* indicador LED */
+.led{
+  width:18px;height:18px;border-radius:50%;
+  background:#475569;
+  transition:all 220ms ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.led.on{
+  background:var(--success);
+  box-shadow:0 0 12px rgba(34,197,94,0.22);
+}
+
+/* Alerts y estados */
+.alert{color:var(--danger);font-weight:700}
+.ok{color:var(--success);font-weight:700}
+
+/* ========== Chart container ========== */
+#chartContainer{
+  margin-top:14px;
+  background:var(--card);
+  border-radius:12px;
+  padding:14px;
+  border:var(--glass-border);
+  box-shadow:var(--shadow);
+}
+#sensorChart{max-height:420px;width:100%}
+
+/* ========== Inputs, selects y controles ========== */
+select, input[type="date"], input[type="time"]{
+  padding:8px 10px;border-radius:8px;border:1px solid rgba(15,23,42,0.06);background:transparent;color:var(--text);
+}
+
+/* Botones utilitarios */
+button:disabled{opacity:0.6;cursor:not-allowed}
+
+/* ========== Footer ========== */
+.footer{
+  margin-top:20px;
+  text-align:center;
+  color:var(--muted);
+  font-size:0.9rem;
+}
+
+/* ========== Responsive tweaks ========== */
+@media (max-width:640px){
+  .nav-right input[type="url"]{min-width:120px}
+  h1{font-size:1.2rem}
+  .tiles{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .navbar{flex-direction:column;align-items:flex-start;gap:8px}
+}
+
+/* ========== Pequeñas utilidades ========== */
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:var(--glass);font-weight:600}
+.muted{color:var(--muted);font-size:0.9rem}
+.center{text-align:center}
+
+/* ========== Smooth transitions ========== */
+.tile, .navbtn, .theme-toggle, .nav-right input, .tile-actions button {
+  transition:all 180ms ease;
 }

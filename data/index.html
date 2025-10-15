@@ -2,69 +2,129 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Panel ESP32</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Casa Domótica - Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #4fc3f7;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .card {
+      background: #1e1e1e;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0px 4px 6px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+    .card h3 {
+      margin: 0 0 10px 0;
+      color: #90caf9;
+    }
+    .status {
+      font-size: 1.2em;
+      margin: 5px 0;
+    }
+    canvas {
+      margin-top: 30px;
+      background: #1e1e1e;
+      border-radius: 12px;
+      padding: 10px;
+    }
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #888;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Panel de Sensores ESP32</h1>
-  </header>
+  <h1>🏠 Casa Domótica</h1>
+  <div class="dashboard">
+    <div class="card"><h3>🌡️ Temperatura</h3><div class="status" id="temp">-- °C</div></div>
+    <div class="card"><h3>💧 Humedad</h3><div class="status" id="hum">-- %</div></div>
+    <div class="card"><h3>🔥 Gas</h3><div class="status" id="gas">-- ppm</div></div>
+    <div class="card"><h3>🌧️ Agua</h3><div class="status" id="water">-- %</div></div>
+    <div class="card"><h3>🚶 Movimiento</h3><div class="status" id="motion">--</div></div>
+    <div class="card"><h3>👕 Tendedero</h3><div class="status" id="tender">--</div></div>
+  </div>
 
-  <main>
-    <section id="sensores">
-      <div class="sensor">
-        <span>Temperatura:</span>
-        <span id="temp">-- °C</span>
-        <button class="calendar-btn" onclick="mostrarCalendario('temperature')">📅</button>
-      </div>
-      <div class="sensor">
-        <span>Humedad:</span>
-        <span id="hum">-- %</span>
-        <button class="calendar-btn" onclick="mostrarCalendario('humidity')">📅</button>
-      </div>
-      <div class="sensor">
-        <span>Gas:</span>
-        <span id="gas">--</span>
-        <button class="calendar-btn" onclick="mostrarGases()">🔍</button>
-        <button class="calendar-btn" onclick="mostrarCalendario('gas')">📅</button>
-      </div>
-      <div class="sensor">
-        <span>Lluvia:</span>
-        <span id="rain">--</span>
-        <button class="calendar-btn" onclick="mostrarCalendario('rain')">📅</button>
-      </div>
-      <div class="sensor">
-        <span>Movimiento:</span>
-        <span id="motion">--</span>
-        <button class="calendar-btn" onclick="mostrarCalendario('motion')">📅</button>
-      </div>
-    </section>
+  <canvas id="sensorChart"></canvas>
 
-    <section id="grafica" class="hidden">
-      <h2 id="grafica-titulo">Gráfica</h2>
-      <input type="date" id="fecha" onchange="cargarGrafica()">
-      <canvas id="chart"></canvas>
-      <button onclick="cerrarGrafica()">Cerrar</button>
-    </section>
+  <footer>Hecho con ❤️ usando ESP32 + PlatformIO</footer>
 
-    <section id="popup-gas" class="hidden popup">
-      <h2>Detalle de gases</h2>
-      <ul>
-        <li>CO (Monóxido de carbono)</li>
-        <li>LPG (Gas licuado de petróleo)</li>
-        <li>Metano</li>
-        <li>Alcohol</li>
-        <li>Humo</li>
-      </ul>
-      <button onclick="cerrarPopupGas()">Cerrar</button>
-    </section>
-  </main>
+  <script>
+    const baseUrl = window.location.origin;
+    const ctx = document.getElementById("sensorChart").getContext("2d");
+    const chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [
+          { label: "Temperatura (°C)", data: [], borderColor: "#ff5252", fill: false },
+          { label: "Humedad (%)", data: [], borderColor: "#29b6f6", fill: false },
+          { label: "Gas (ppm)", data: [], borderColor: "#ffa726", fill: false },
+          { label: "Agua (%)", data: [], borderColor: "#66bb6a", fill: false },
+          { label: "Movimiento", data: [], borderColor: "#ab47bc", fill: false },
+          { label: "Tendedero", data: [], borderColor: "#fdd835", fill: false }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { labels: { color: "#e0e0e0" } } },
+        scales: {
+          x: { ticks: { color: "#e0e0e0" } },
+          y: { ticks: { color: "#e0e0e0" } }
+        }
+      }
+    });
 
-  <footer>
-    <p>ESP32 Domótica - 2025</p>
-  </footer>
+    async function updateData() {
+      try {
+        const res = await fetch(baseUrl + "/data");
+        const data = await res.json();
 
-  <script src="script.js"></script>
+        document.getElementById("temp").innerText = data.temp + " °C";
+        document.getElementById("hum").innerText = data.hum + " %";
+        document.getElementById("gas").innerText = data.gas + " ppm";
+        document.getElementById("water").innerText = data.water + " %";
+        document.getElementById("motion").innerText = data.motion ? "Detectado ✅" : "No";
+        document.getElementById("tender").innerText = (data.tender === "Exterior") ? "Exterior ☀️" : "Cubierto ☔";
+
+        const time = data.timestamp || new Date().toLocaleTimeString();
+        if (chart.data.labels.length > 20) {
+          chart.data.labels.shift();
+          chart.data.datasets.forEach(ds => ds.data.shift());
+        }
+        chart.data.labels.push(time);
+        chart.data.datasets[0].data.push(data.temp);
+        chart.data.datasets[1].data.push(data.hum);
+        chart.data.datasets[2].data.push(data.gas);
+        chart.data.datasets[3].data.push(data.water);
+        chart.data.datasets[4].data.push(data.motion ? 1 : 0);
+        chart.data.datasets[5].data.push((data.tender === "Exterior") ? 1 : 0);
+
+        chart.update();
+      } catch (e) {
+        console.error("Error obteniendo datos:", e);
+      }
+    }
+
+    setInterval(updateData, 2000);
+    updateData();
+  </script>
 </body>
 </html>
